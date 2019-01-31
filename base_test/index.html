@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="appPaging" class="button-paging-box">
+        <!-- 分页器 -->
+        <div class="button-paging">
+            <div class="item-left pag-prev" @click="prevOrNext(-1)">上一页</div>
+            <ul class="item-left pag-nav">
+
+                <li class="item-left num-item" :class="{'num-item-current':currentPage==item}" @click="togglePage(item)"
+                    v-for="item in pagesArr">{{item}}</li>
+
+            </ul>
+            <div class="item-left pag-next" @click="prevOrNext(1)">下一页</div>
+            <div class="item-left pag-all-show">
+                <span class="pag-current-show">{{currentPage}}</span>/{{countsPage}}</div>
+            <div class="item-left go-where-page">到第
+                <span class="go-input">
+                    <input type="text" :placeholder="inputScanf" @keyup.enter="goToEnterPage" v-model="inputScanfValue"
+                        size="2" maxlength="3" class="scanf-page">
+                </span>
+                页</div>
+            <div class="item-left go-enter" @click="goToEnterPage">确定</div>
+        </div>
+    </div>
+    <script>
+        const appPaging = new Vue({
+            el: "#appPaging",
+            data() {
+                return {
+                    //  当前选中的页码
+                    currentPage: 10,
+                    // 当前总共的页码
+                    countsPage: 22,
+                    inputScanfValue: "",
+                }
+
+            },
+            created() {
+
+            },
+
+            computed: {
+                inputScanf() {
+                    this.inputScanfValue = this.currentPage;
+                    return this.currentPage;
+                },
+                pagesArr() {
+                    const currentPage = this.currentPage;
+                    const countsPage = this.countsPage;
+                    // 三种情况,
+                    // 当选中的页码数小于5的时候,显示
+                    if (currentPage <= 4) {
+                        return [1, 2, 3, 4, 5, "...", countsPage];
+                    } else if (currentPage >= countsPage - 3) {
+                        return [1, "...", countsPage - 4, countsPage - 3, countsPage - 2, countsPage - 1, countsPage]
+                    } else {
+                        return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", countsPage];
+                    }
+
+                }
+            },
+            methods: {
+
+                // 上一页
+                prevOrNext(n) {
+                    this.currentPage += n
+                    this.currentPage < 1
+                        ? this.currentPage = 1
+                        : this.currentPage > this.countsPage
+                            ? this.currentPage = this.countsPage
+                            : null
+                },
+                // 下一页
+
+                // 切换页码
+                togglePage(item) {
+                    //  console.log(item);
+                    if (item === this.currentPage) return false;
+                    if (typeof item === 'string') return false;
+                    this.currentPage = item;
+                },
+                //  初始化当前页面
+                initPage() {
+
+                },
+
+
+
+                // 按了确定之后的函数
+                goToEnterPage() {
+                    // alert(this.inputScanf);
+                    // 判断是当前页,如果是当前页面直接为空
+                    if (this.inputScanfValue == this.currentPage) {
+                        console.log("no");
+                    } else if (this.inputScanfValue >= 1 && this.inputScanfValue <= this.countsPage) {
+                        // alert("准备跳转",this.inputScanfValue);
+                        this.goJump();
+
+                    } else {
+                        alert("请输入正确的页码");
+                    }
+                },
+
+
+                // 专门用来跳转的函数
+                goJump() {
+                    // alert();
+                    this.currentPage = this.inputScanfValue;
+                }
+
+            }
+        })
+    </script>
+    <style>
+        /* @import url("./../css/reset.css"); */
+        /* reset.css */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            margin: 0;
+        }
+
+
+        ul,
+        li {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #ff6600;
+        }
+
+        /* reset.css */
+        #appPaging.button-paging-box {
+            margin-bottom: 60px;
+            margin-left: 206px;
+            height: 42px;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        #appPaging.button-paging-box .item-left {
+            cursor: pointer;
+            float: left;
+        }
+
+        #appPaging.button-paging-box::after,
+        #appPaging.button-paging-box::before {
+            content: "";
+            height: 0;
+            display: block;
+            width: 100%;
+            visibility: hidden;
+            clear: both;
+            zoom: 1;
+        }
+
+        #appPaging.button-paging-box .pag-prev {
+            width: 105px;
+            height: 40px;
+            background-color: #ffffff;
+            border: solid 1px rgba(204, 204, 204, 0.9);
+            font-size: 14px;
+            line-height: 40px;
+            color: #333333;
+        }
+
+        #appPaging.button-paging-box .pag-next {
+            width: 105px;
+            height: 40px;
+            margin-left: 8px;
+            background-color: #ffffff;
+            border: solid 1px rgba(204, 204, 204, 0.9);
+            font-size: 14px;
+            line-height: 40px;
+            color: #333333;
+        }
+
+        #appPaging.button-paging-box .button-paging::after,
+        #appPaging.button-paging-box .button-paging::before {
+            content: "";
+            height: 0;
+            display: block;
+            width: 100%;
+            visibility: hidden;
+            clear: both;
+            zoom: 1;
+        }
+
+        #appPaging.button-paging-box .button-paging .pag-nav {
+            margin-left: 8px;
+        }
+
+        #appPaging.button-paging-box .button-paging .pag-nav .num-item {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            margin-left: 8px;
+            background-color: #ffffff;
+            border: solid 1px rgba(204, 204, 204, 0.9);
+        }
+
+        #appPaging.button-paging-box .button-paging .pag-nav .num-item:hover {
+            background-color: #ff6600;
+            color: #ffffff;
+            border: solid 1px #ff6600;
+        }
+
+        #appPaging.button-paging-box .button-paging .pag-nav .num-item-current {
+            background-color: #ff6600;
+            color: #ffffff;
+            border: solid 1px #ff6600;
+        }
+
+        #appPaging.button-paging-box .button-paging .pag-all-show {
+            margin-left: 14px;
+            height: 40px;
+            width: 40px;
+            line-height: 40px;
+            font-size: 14px;
+            color: #333333;
+        }
+
+        #appPaging.button-paging-box .button-paging .pag-all-show .pag-current-show {
+            color: #ff6600;
+        }
+
+        #appPaging.button-paging-box .button-paging .go-where-page {
+            margin-left: 30px;
+            font-size: 14px;
+            color: #333333;
+        }
+
+        #appPaging.button-paging-box .button-paging .go-where-page .go-input {
+            width: 40px;
+            height: 40px;
+        }
+
+        #appPaging.button-paging-box .button-paging .go-where-page .go-input .scanf-page {
+            margin: 0 8px;
+            width: 40px;
+            height: 42px;
+            line-height: 40px;
+            text-align: center;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            border: 0 none;
+            outline: 0 none;
+            border: 1px solid rgba(204, 204, 204, 0.9);
+        }
+
+        #appPaging.button-paging-box .button-paging .go-enter {
+            margin-left: 14px;
+            width: 81px;
+            height: 40px;
+            line-height: 40px;
+            background-color: #ffffff;
+            font-size: 14px;
+            color: #333333;
+            border: solid 1px rgba(204, 204, 204, 0.9);
+        }
+    </style>
+</body>
+
+</html>
